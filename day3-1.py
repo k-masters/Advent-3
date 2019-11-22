@@ -1,12 +1,13 @@
 import re
+import timeit
+import pprint as pp
 
-with open("Files/test_input_day3-1.txt") as data:
-    cloth_start_x = 0
-    cloth_start_y = 0
-    cloth_size_x = 0
-    cloth_size_y = 0
+start = timeit.default_timer()
+
+with open("Files/input.txt") as data:
     cloth_list = []
     used_inch_coords = []
+    dup_inch_coords = []
 
     for line in data:
 
@@ -22,14 +23,34 @@ with open("Files/test_input_day3-1.txt") as data:
         cloth_list.append(temp_dict)
 
     for cloth in cloth_list:
-        #print(cloth)
-        # get x,y pairs of each used inch starting with the given coords
+
+        overlap_found = False
+
+        print(cloth.get("index"))
+
         temp_list =[]
 
-        #todo: this takes care of the first group of x coords now need to start over for the second group of y
         for i in range(int(cloth.get("cloth_start_x")), int(cloth.get("cloth_start_x")) +
                                                             int(cloth.get("cloth_size_x"))):
 
             temp_list.append("{}, {}".format(str(i), cloth.get("cloth_start_y")))
+            #print(temp_list)
 
-        print(temp_list)
+            for z in range(int(cloth.get("cloth_start_y")) + 1, int(cloth.get("cloth_start_y")) +
+                                                                int(cloth.get("cloth_size_y"))):
+
+                temp_list.append("{}, {}".format(i, z))
+                #print(temp_list)
+
+        # print(temp_list)
+        for coord in temp_list:
+            if coord in used_inch_coords and coord not in dup_inch_coords: # basically is the coord a new dupe
+                dup_inch_coords.append(coord)
+            else:
+                used_inch_coords.append(coord)
+
+print("Duplicate inch coordinates!: ", len(dup_inch_coords))
+print("Ok inch coordinates!: ", len(used_inch_coords))
+
+stop = timeit.default_timer()
+print("Time: {}".format(start - stop))
